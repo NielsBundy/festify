@@ -9,6 +9,7 @@ export default class Festival {
     public startDate: Date;
     public endDate: Date;
     public imageUrl: string;
+    public ticketMasterUrl: string;
 
     constructor (data?: Festival) {
         Object.assign(this, data);

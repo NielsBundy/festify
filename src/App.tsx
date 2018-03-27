@@ -46,8 +46,21 @@ class App extends React.Component<Props, State> {
         setTimeout(() => this.setState({isLoading: false}), 2000);
     }
 
+    handleRequestFindHotels = (location: any, radius: number) => {
+        const service = new google.maps.places.PlacesService(document.createElement('div'));
+        service.nearbySearch(
+        {
+            location: new google.maps.LatLng(Number(location.latitude), Number(location.longitude)),
+            radius: radius,
+            type: 'hotel'
+        }, 
+        results => {
+            alert(results[0].name);
+        });
+    }
+
     render() {
-        const markers = this.state.festivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} />);
+        const markers = this.state.festivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} requestFindHotels={this.handleRequestFindHotels} />);
 
         return (
             <div className="App">

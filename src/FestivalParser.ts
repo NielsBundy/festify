@@ -12,10 +12,11 @@ export default class FestivalParser {
                 longitude: data._embedded.venues[0].location.longitude
             }),
             imageUrl: data.images[0].url,
-            address: data._embedded.venues[0].city.name,
+            address: data._embedded.venues[0].name + ', ' + data._embedded.venues[0].postalCode + ', ' + data._embedded.venues[0].city.name,
             startDate: new Date(data.sales.public.startDateTime),
             endDate: new Date(data.sales.public.endDateTime),
-            ticketPrice: data.priceRanges[0].min
+            ticketPrice: data.priceRanges[0].min,
+            ticketMasterUrl: data.url
         });
     }
 }

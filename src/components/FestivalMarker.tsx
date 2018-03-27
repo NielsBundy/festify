@@ -4,12 +4,14 @@ import { Marker } from 'react-google-maps';
 import Dialog, {
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
   } from 'material-ui/Dialog';
 
+import Button from 'material-ui/Button';
+
 interface Props {
     festival: Festival;
+    requestFindHotels: (location: any, radius: number) => void;
 }
 interface State {
     popoutOpen: boolean;
@@ -22,6 +24,15 @@ export default class FestivalMarker extends React.Component<Props, State> {
 
     handleClick = () => {
         this.setState(ps => { return { popoutOpen: !ps.popoutOpen }; });
+    }
+
+    handleClickTicketMaster = () => {
+        window.open(this.props.festival.ticketMasterUrl);
+    }
+
+    handleClickFindHotels = () => {
+        this.setState(ps => { return { popoutOpen: !ps.popoutOpen }; });
+        this.props.requestFindHotels(this.props.festival.location, 50);
     }
 
     public render() {
@@ -51,12 +62,30 @@ export default class FestivalMarker extends React.Component<Props, State> {
                     />
                     <DialogTitle id="alert-dialog-title">{f.name}</DialogTitle>
                     <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            <p>Prijs: {f.ticketPrice} EUR</p>
-                        </DialogContentText>
+                        <table style={{border: '0px solid transparent'}}>
+                            <tbody>
+                                <tr>
+                                    <td style={{fontWeight: 'bold'}}>Prijs:</td>
+                                    <td>{f.ticketPrice} EUR</td>
+                                </tr>
+                                <tr>
+                                    <td style={{fontWeight: 'bold'}}>Adres:</td>
+                                    <td>{f.address}</td>
+                                </tr>
+                                <tr>
+                                    <td style={{fontWeight: 'bold', paddingRight: 20}}>Wanneer:</td>
+                                    <td>{f.startDate.toLocaleString()}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </DialogContent>
                     <DialogActions>
-                        t
+                        <Button onClick={this.handleClickFindHotels}>
+                            Vind hotels in de buurt
+                        </Button>
+                        <Button onClick={this.handleClickTicketMaster}>
+                            Bekijk op TicketMaster
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </div>

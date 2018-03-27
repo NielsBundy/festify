@@ -11,6 +11,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-google-maps": "^9.4.5",
+    "react-google-places": "^2.0.3",
     "react-scripts-ts": "2.14.0",
     "typeface-roboto": "^0.0.54"
   },
