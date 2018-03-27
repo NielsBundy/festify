@@ -6,6 +6,7 @@ import { CircularProgress } from 'material-ui/Progress';
 interface Props {
     // tslint:disable-next-line: no-any
     markers?: any[];
+    onClusterClick: (cluster: Cluster) => void;
     zoom: number;
     center: any;
 }
@@ -22,7 +23,7 @@ const Map: React.SFC<Props> = (props) => {
             defaultZoom={props.zoom}
             options={{disableDefaultUI: true}} 
         >
-            <MarkerClusterer averageCenter={true} enableRetinaIcons={true} gridSize={60}>
+            <MarkerClusterer averageCenter={true} enableRetinaIcons={true} gridSize={60} onClick={props.onClusterClick}>
                 {props.markers}
             </MarkerClusterer>
         </GoogleMap>);

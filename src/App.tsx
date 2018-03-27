@@ -68,6 +68,37 @@ class App extends React.Component<Props, State> {
         });
     }
 
+    handleClusterClick = (cluster: Cluster) => {
+        const markers = cluster.getMarkers();
+        let hasDuplicates = true;
+        for (var i = 0; i < markers.length; i++) {
+            const marker1 = markers[i];
+            const location1 = marker1.getPosition();
+
+            for (var x = 0; x < markers.length; x++) {
+                if (i === x) {
+                    continue;
+                }
+                const marker2 = markers[x];
+                const location2 = marker2.getPosition();
+
+                if (location1.lat() !== location2.lat() &&
+                    location1.lng() !== location2.lng()) {
+                        hasDuplicates = false;
+                        break;
+                    }
+            }
+            if (hasDuplicates) {
+                break;
+            }
+        }
+
+        if (hasDuplicates) {
+            // Al deze markers vinden op deze plaats plek
+            alert('duplicates');
+        }
+    }
+
     render() {
         const markers = this.state.festivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} requestFindHotels={this.handleRequestFindHotels} />);
 
@@ -81,6 +112,7 @@ class App extends React.Component<Props, State> {
                     markers={markers}
                     zoom={this.state.mapZoom}
                     center={this.state.mapCenter}
+                    onClusterClick={this.handleClusterClick}
                 />
                 <Dialog open={this.state.isLoading}>
                     <DialogContent>
