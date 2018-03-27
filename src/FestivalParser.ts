@@ -24,7 +24,7 @@ export default class FestivalParser {
             address,
             startDate: new Date(data.sales.public.startDateTime),
             endDate: new Date(data.sales.public.endDateTime),
-            ticketPrice: data.priceRanges[0].min,
+            ticketPrice: data.priceRanges !== undefined ? data.priceRanges[0].min : 0,
             ticketMasterUrl: data.url
         });
     }

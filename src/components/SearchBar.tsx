@@ -9,6 +9,7 @@ import IconButton from 'material-ui/IconButton';
 interface Props {
     // tslint:disable-next-line: no-any
     style?: any;
+    placeholder?: string;
     onSearch?: (query: string) => void;
 }
 interface State {
@@ -44,10 +45,10 @@ export default class SearchBar extends React.Component<Props, State> {
     public render() {
         return (
             <div style={this.props.style}>
-                <Card style={{padding: 5, paddingLeft: 10, paddingRight: 10}}>
+                <Card style={{padding: 5, paddingLeft: 15, paddingRight: 10, paddingTop: 10}}>
                     <TextField 
                         label="Zoeken"
-                        placeholder="Rock"
+                        placeholder={this.props.placeholder}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -55,7 +56,7 @@ export default class SearchBar extends React.Component<Props, State> {
                         value={this.state.value}
                         onChange={this.handleChangeValue}
                         onKeyUp={this.handleKeyUp}
-                        style={{marginRight: 5}}
+                        style={{marginRight: 5, width: 250}}
                     />
                     <IconButton onClick={this.performSearch}>
                         <Icon>search</Icon>

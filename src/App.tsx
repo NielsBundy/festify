@@ -7,6 +7,7 @@ import Festival from './models/Festival';
 import FestivalParser from './FestivalParser';
 import axios from 'axios';
 import FestivalMarker from './components/FestivalMarker';
+import FestivalDialog from './components/FestivalDialog';
 import { CircularProgress } from 'material-ui/Progress';
 import 'typeface-roboto';
 
@@ -18,15 +19,26 @@ interface Props { }
 interface State {
     isLoading: boolean;
     festivals: Festival[];
+    shownFestivals: Festival[];
+    searchPlaceholder: string;
 }
+
+const placeholders = [
+    'Zoek op een genre...',
+    'Zoek op een artiest...',
+    'Zoek op een festival...',
+    'Zoek op een plaats...'
+];
 
 class App extends React.Component<Props, State> {
     state = {
         festivals: [],
+        shownFestivals: [],
         isLoading: true,
         mapCenter: netherlandsCoords,
         mapZoom: 8,
-        clusters: []
+        clusters: [],
+        searchPlaceholder: placeholders[Math.floor(Math.random() * placeholders.length)]
     };
 
     componentWillMount() {
@@ -47,6 +59,11 @@ class App extends React.Component<Props, State> {
         axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=CrAudt7Fecq4gmwSzIQMwpBoGndWzzIY&countryCode=nl&size=100&keyword=${query}`)
         .then(res => {
             const parser = new FestivalParser();
+            if (res.data._embedded === undefined) {
+                alert('Er zijn geen resultaten voor dit trefwoord.');
+                this.setState({isLoading: false});
+                return;
+            }
             const festivals = res.data._embedded.events.map(parser.parse);
             
             this.setState({festivals, isLoading: false});
@@ -70,7 +87,7 @@ class App extends React.Component<Props, State> {
 
     handleClusterClick = (cluster: Cluster) => {
         const markers = cluster.getMarkers();
-        let hasDuplicates = true;
+        let areAllDuplicates = true;
         for (var i = 0; i < markers.length; i++) {
             const marker1 = markers[i];
             const location1 = marker1.getPosition();
@@ -84,19 +101,30 @@ class App extends React.Component<Props, State> {
 
                 if (location1.lat() !== location2.lat() &&
                     location1.lng() !== location2.lng()) {
-                        hasDuplicates = false;
+                        areAllDuplicates = false;
                         break;
                     }
             }
-            if (hasDuplicates) {
+            if (areAllDuplicates) {
                 break;
             }
         }
 
-        if (hasDuplicates) {
+        if (areAllDuplicates) {
             // Al deze markers vinden op deze plaats plek
-            alert('duplicates');
+            const position = markers[0].getPosition();
+            const festivals = this.getFestivalsByPosition(position);
+            if (festivals === undefined) { return; }
+
+            this.setState({shownFestivals: festivals});
         }
+    }
+
+    getFestivalsByPosition = (position: google.maps.LatLng): Festival[] | undefined => {
+        return this.state.festivals.filter((f: Festival) => {
+            return Math.abs(f.location.latitude - position.lat()) < 0.00001 &&
+                   Math.abs(f.location.longitude - position.lng()) < 0.00001;
+        }) as Festival[];
     }
 
     render() {
@@ -106,6 +134,7 @@ class App extends React.Component<Props, State> {
             <div className="App">
                 <SearchBar 
                     style={{position: 'absolute', zIndex: 2, display: 'flex', margin: 10}}
+                    placeholder={this.state.searchPlaceholder}
                     onSearch={this.handleSearch}
                 />
                 <GoogleMap 
@@ -119,6 +148,12 @@ class App extends React.Component<Props, State> {
                         <CircularProgress />
                     </DialogContent>
                 </Dialog>
+                <FestivalDialog 
+                    requestFindHotels={this.handleRequestFindHotels}
+                    isOpen={this.state.shownFestivals.length !== 0}
+                    onRequestClose={() => this.setState({shownFestivals: []})}
+                    festivals={this.state.shownFestivals}
+                />
             </div>
         );
     }
