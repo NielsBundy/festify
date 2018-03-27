@@ -32,7 +32,7 @@ export default class FestivalMarker extends React.Component<Props, State> {
 
     handleClickFindHotels = () => {
         this.setState(ps => { return { popoutOpen: !ps.popoutOpen }; });
-        this.props.requestFindHotels(this.props.festival.location, 50);
+        this.props.requestFindHotels(this.props.festival.location, 500);
     }
 
     public render() {

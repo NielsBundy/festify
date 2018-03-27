@@ -43,17 +43,26 @@ class App extends React.Component<Props, State> {
 
     handleSearch = (query: string) => {
         this.setState({isLoading: true});
-        setTimeout(() => this.setState({isLoading: false}), 2000);
+
+        axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=CrAudt7Fecq4gmwSzIQMwpBoGndWzzIY&countryCode=nl&size=100&keyword=${query}`)
+        .then(res => {
+            const parser = new FestivalParser();
+            const festivals = res.data._embedded.events.map(parser.parse);
+            
+            this.setState({festivals, isLoading: false});
+        });
     }
 
     handleRequestFindHotels = (location: any, radius: number) => {
         const service = new google.maps.places.PlacesService(document.createElement('div'));
+
         service.nearbySearch(
         {
-            location: new google.maps.LatLng(Number(location.latitude), Number(location.longitude)),
+            location: new google.maps.LatLng(location.latitude, location.longitude),
             radius: radius,
-            type: 'hotel'
-        }, 
+            type: 'hotel',
+            name: 'hotel'
+        },
         results => {
             alert(results[0].name);
         });

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GoogleMap, withGoogleMap, withScriptjs } from 'react-google-maps';
+import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
 import { CircularProgress } from 'material-ui/Progress';
 
 interface Props {
@@ -21,7 +22,9 @@ const Map: React.SFC<Props> = (props) => {
             defaultZoom={props.zoom}
             options={{disableDefaultUI: true}} 
         >
-            {props.markers}
+            <MarkerClusterer averageCenter={true} enableRetinaIcons={true} gridSize={60}>
+                {props.markers}
+            </MarkerClusterer>
         </GoogleMap>);
 
     }));
