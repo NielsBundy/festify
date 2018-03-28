@@ -20,13 +20,14 @@ export default class HotelMarker extends React.Component<Props, State> {
 
     public render() {
         const h = this.props.hotel;
+        let iconUrl = '/images/hotel.png';
 
         return (
             <div>
                 <Marker 
                     onClick={this.handleClick}
                     position={h.geometry.location}
-                    icon={{url: '/images/hotel.png'}}
+                    icon={{url: iconUrl}}
                 />
                 <HotelDialog 
                     isOpen={this.state.popoutOpen}

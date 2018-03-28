@@ -1,11 +1,9 @@
 import * as React from 'react';
 
 import Dialog, {
-    DialogActions,
     DialogContent,
     DialogTitle,
   } from 'material-ui/Dialog';
-import Button from 'material-ui/Button';
 
 // import Typography from 'material-ui/Typography';
 
@@ -45,22 +43,22 @@ const HotelDialog: React.SFC<Props> = (props) => {
                 <table style={{border: '0px solid transparent'}}>
                     <tbody>
                         <tr>
-                            <td style={{fontWeight: 'bold'}}>Prijs:</td>
-                        </tr>
-                        <tr>
                             <td style={{fontWeight: 'bold'}}>Adres:</td>
-                            {/* <td>{f.address}</td> */}
+                            <td>{h.vicinity}</td>
                         </tr>
+                        {h.international_phone_number !== undefined &&
                         <tr>
-                            <td style={{fontWeight: 'bold', paddingRight: 20}}>Wanneer:</td>
-                            {/* <td>{f.startDate.toLocaleString()}</td> */}
+                            <td style={{fontWeight: 'bold'}}>Telefoon:</td>
+                            <td>{h.international_phone_number}</td>
+                        </tr>
+                        }
+                        <tr>
+                            <td style={{fontWeight: 'bold', paddingRight: 20}}>Sterren:</td>
+                            <td>{h.rating}</td>
                         </tr>
                     </tbody>
                 </table>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={() => { console.log('test'); }}>Doe iets</Button>
-            </DialogActions>
         </Dialog>
     );
 };
