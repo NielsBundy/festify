@@ -25,8 +25,8 @@ interface State {
 
 const placeholders = [
     'Zoek op een genre...',
-    'Zoek op een artiest...',
-    'Zoek op een festival...',
+    'Zoek naar een artiest...',
+    'Zoek naar een festival...',
     'Zoek op een plaats...'
 ];
 
@@ -133,9 +133,11 @@ class App extends React.Component<Props, State> {
         return (
             <div className="App">
                 <SearchBar 
-                    style={{position: 'absolute', zIndex: 2, display: 'flex', margin: 10}}
+                    style={{position: 'absolute', zIndex: 2, margin: 10}}
                     placeholder={this.state.searchPlaceholder}
                     onSearch={this.handleSearch}
+                    minPrice={10}
+                    maxPrice={30}
                 />
                 <GoogleMap 
                     markers={markers}
