@@ -100,7 +100,7 @@ export default class FestivalDialog extends React.Component<Props, State> {
                                 <td>{f.address}</td>
                             </tr>
                             <tr>
-                                <td style={{fontWeight: 'bold', paddingRight: 20}}>Wanneer:</td>
+                                <td style={{fontWeight: 'bold', paddingRight: 20}}>Ticket verkoop vanaf:</td>
                                 <td>{f.startDate.toLocaleString()}</td>
                             </tr>
                         </tbody>
