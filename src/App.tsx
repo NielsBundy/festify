@@ -19,8 +19,11 @@ interface Props { }
 interface State {
     isLoading: boolean;
     festivals: Festival[];
+    filteredFestivals: Festival[];
     shownFestivals: Festival[];
     searchPlaceholder: string;
+    filterMinPrice: number;
+    filterMaxPrice: number;
 }
 
 const placeholders = [
@@ -33,12 +36,15 @@ const placeholders = [
 class App extends React.Component<Props, State> {
     state = {
         festivals: [],
+        filteredFestivals: [],
         shownFestivals: [],
         isLoading: true,
         mapCenter: netherlandsCoords,
         mapZoom: 8,
         clusters: [],
-        searchPlaceholder: placeholders[Math.floor(Math.random() * placeholders.length)]
+        searchPlaceholder: placeholders[Math.floor(Math.random() * placeholders.length)],
+        filterMinPrice: 0,
+        filterMaxPrice: 0
     };
 
     componentWillMount() {
@@ -49,7 +55,7 @@ class App extends React.Component<Props, State> {
             const parser = new FestivalParser();
             const festivals = res.data._embedded.events.map(parser.parse);
             
-            this.setState({festivals, isLoading: false});
+            this.setFestivals(festivals);
         });
     }
 
@@ -66,8 +72,24 @@ class App extends React.Component<Props, State> {
             }
             const festivals = res.data._embedded.events.map(parser.parse);
             
-            this.setState({festivals, isLoading: false});
+            this.setFestivals(festivals);
         });
+    }
+
+    setFestivals = (festivals: Festival[]) => {
+        const minPrice = festivals.reduce((minF: Festival, cF: Festival) => cF.ticketPrice < minF.ticketPrice ? cF : minF, festivals[0]).ticketPrice;
+        const maxPrice = festivals.reduce((maxF: Festival, cF: Festival) => cF.ticketPrice > maxF.ticketPrice ? cF : maxF, festivals[0]).ticketPrice;
+
+        this.setState({festivals, filteredFestivals: festivals, isLoading: false, filterMinPrice: minPrice, filterMaxPrice: maxPrice});
+    }
+
+    setFilterFestivals = (filter: (f: Festival) => boolean) => {
+        const festivals = this.state.festivals.filter(filter);
+        
+        // const minPrice = festivals.reduce((minF: Festival, cF: Festival) => cF.ticketPrice < minF.ticketPrice ? cF : minF, festivals[0]).ticketPrice;
+        // const maxPrice = festivals.reduce((maxF: Festival, cF: Festival) => cF.ticketPrice > maxF.ticketPrice ? cF : maxF, festivals[0]).ticketPrice;
+
+        this.setState({filteredFestivals: festivals/*, filterMinPrice: minPrice, filterMaxPrice: maxPrice */});
     }
 
     handleRequestFindHotels = (location: any, radius: number) => {
@@ -121,14 +143,14 @@ class App extends React.Component<Props, State> {
     }
 
     getFestivalsByPosition = (position: google.maps.LatLng): Festival[] | undefined => {
-        return this.state.festivals.filter((f: Festival) => {
+        return this.state.filteredFestivals.filter((f: Festival) => {
             return Math.abs(f.location.latitude - position.lat()) < 0.00001 &&
                    Math.abs(f.location.longitude - position.lng()) < 0.00001;
         }) as Festival[];
     }
 
     render() {
-        const markers = this.state.festivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} requestFindHotels={this.handleRequestFindHotels} />);
+        const markers = this.state.filteredFestivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} requestFindHotels={this.handleRequestFindHotels} />);
 
         return (
             <div className="App">
@@ -136,8 +158,9 @@ class App extends React.Component<Props, State> {
                     style={{position: 'absolute', zIndex: 2, margin: 10}}
                     placeholder={this.state.searchPlaceholder}
                     onSearch={this.handleSearch}
-                    minPrice={10}
-                    maxPrice={30}
+                    minPrice={this.state.filterMinPrice}
+                    maxPrice={this.state.filterMaxPrice}
+                    onRequestApplyFilter={this.setFilterFestivals}
                 />
                 <GoogleMap 
                     markers={markers}

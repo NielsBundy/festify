@@ -10,6 +10,8 @@ import IconButton from 'material-ui/IconButton';
 import Input, { InputAdornment } from 'material-ui/Input';
 import { FormControl } from 'material-ui/Form';
 import Button from 'material-ui/Button';
+import Tooltip from 'material-ui/Tooltip';
+import Festival from '../models/Festival';
 
 interface Props {
     // tslint:disable-next-line: no-any
@@ -18,6 +20,7 @@ interface Props {
     onSearch?: (query: string) => void;
     minPrice: number;
     maxPrice: number;
+    onRequestApplyFilter: (filter: ((f: Festival) => boolean)) => void;
 }
 interface State {
     filterShown: boolean;
@@ -36,6 +39,20 @@ export default class SearchBar extends React.Component<Props, State> {
         maxPrice: this.props.maxPrice,
         canApplyFilter: false
     };
+
+    componentWillReceiveProps(props: Props) {
+        let newState = Object.assign({}, this.state);
+        newState.canApplyFilter = false;
+
+        if (props.minPrice !== this.state.minPrice) {
+            newState.minPrice = props.minPrice;
+        }
+        if (props.maxPrice !== this.state.maxPrice) {
+            newState.maxPrice = props.maxPrice;
+        }
+
+        this.setState(newState);
+    }
 
     // tslint:disable-next-line: no-any
     handleChangeValue = (event: any) => {
@@ -61,34 +78,46 @@ export default class SearchBar extends React.Component<Props, State> {
         }
     }
 
-    handleKeyDownPriceInput = (event: any) => {
-        if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
-            event.preventDefault();
-            return false;
-        }
-        return true;
-    }
+    // handleKeyDownPriceInput = (event: any) => {
+    //     if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+    //         event.preventDefault();
+    //         return false;
+    //     }
+    //     return true;
+    // }
 
     handleChangeMinPrice = (event: any) => {
         const newValue = Number(event.target.value);
-        if (newValue < this.props.minPrice || newValue > this.props.maxPrice) {
-            return;
-        }
-
         this.setState({minPrice: newValue, canApplyFilter: true});
+    }
+
+    handleBlurPrice = () => {
+        if (this.state.minPrice > this.props.maxPrice) {
+            this.setState({minPrice: this.props.maxPrice});
+        } else if (this.state.minPrice < this.props.minPrice) {
+            this.setState({minPrice: this.props.minPrice});
+        } else if (this.state.minPrice > this.state.maxPrice && this.state.minPrice <= this.props.maxPrice && this.state.maxPrice >= this.props.minPrice) {
+            this.setState({minPrice: this.state.maxPrice});
+        } else if (this.state.maxPrice < this.props.minPrice) {
+            this.setState({maxPrice: this.props.minPrice});
+        } else if (this.state.maxPrice > this.props.maxPrice) {
+            this.setState({maxPrice: this.props.maxPrice});
+        } else if (this.state.maxPrice < this.state.minPrice && this.state.maxPrice >= this.props.minPrice && this.state.minPrice <= this.props.maxPrice) {
+            this.setState({maxPrice: this.state.minPrice});
+        }
     }
 
     handleChangeMaxPrice = (event: any) => {
         const newValue = Number(event.target.value);
-        if (newValue > this.props.maxPrice || newValue < this.props.minPrice) {
-            return;
-        }
-
         this.setState({maxPrice: newValue, canApplyFilter: true});
     }
 
     handleClickApplyFilter = () => {
         this.setState({canApplyFilter: false});
+        this.props.onRequestApplyFilter((f: Festival) => {
+            return f.ticketPrice >= this.state.minPrice &&
+                   f.ticketPrice <= this.state.maxPrice;
+        });
     }
 
     public render() {
@@ -107,37 +136,45 @@ export default class SearchBar extends React.Component<Props, State> {
                         onKeyUp={this.handleKeyUp}
                         style={{marginRight: 5, width: 250}}
                     />
-                    <IconButton onClick={this.performSearch}>
-                        <Icon>search</Icon>
-                    </IconButton>
-                    <IconButton onClick={this.handleClickFilter}>
-                        <Icon>filter_list</Icon>
-                    </IconButton>
+                    <Tooltip title="Klik op te zoeken">
+                        <IconButton onClick={this.performSearch}>
+                            <Icon>search</Icon>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Open/Sluit filter opties">
+                        <IconButton onClick={this.handleClickFilter}>
+                            <Icon>filter_list</Icon>
+                        </IconButton>
+                    </Tooltip>
                 </Card>
                 {this.state.filterShown &&
                 <Card>
                     <CardContent>
                         <Typography gutterBottom variant="subheading" component="h2">Filter opties</Typography>
                         <Typography variant="caption" component="p">Prijs</Typography>
-                        <FormControl style={{width: 100}}>
-                            <Input 
-                                startAdornment={<InputAdornment position="start">&euro;</InputAdornment>} 
-                                type="number" 
-                                value={this.state.minPrice}
-                                onChange={this.handleChangeMinPrice}
-                                onKeyDown={this.handleKeyDownPriceInput}
-                            /> 
-                        </FormControl>
-                        <Typography variant="caption" component="p" style={{display: 'inline-block', marginLeft: 10, marginRight: 10}}>tot</Typography>
-                        <FormControl style={{width: 100}}>
-                            <Input 
-                                startAdornment={<InputAdornment position="start">&euro;</InputAdornment>} 
-                                type="number" 
-                                value={this.state.maxPrice}
-                                onChange={this.handleChangeMaxPrice}
-                                onKeyDown={this.handleKeyDownPriceInput}
-                            /> 
-                        </FormControl>
+                        <Tooltip title="Gebruik de pijltjes toetsen (omhoog en omlaag) om de prijs aan te passen">
+                            <div>
+                            <FormControl style={{width: 100}}>
+                                <Input 
+                                    startAdornment={<InputAdornment position="start">&euro;</InputAdornment>} 
+                                    type="number" 
+                                    value={this.state.minPrice}
+                                    onChange={this.handleChangeMinPrice}
+                                    onBlur={this.handleBlurPrice}
+                                /> 
+                            </FormControl>
+                            <Typography variant="caption" component="p" style={{display: 'inline-block', marginLeft: 10, marginRight: 10}}>tot</Typography>
+                            <FormControl style={{width: 100}}>
+                                <Input 
+                                    startAdornment={<InputAdornment position="start">&euro;</InputAdornment>} 
+                                    type="number" 
+                                    value={this.state.maxPrice}
+                                    onChange={this.handleChangeMaxPrice}
+                                    onBlur={this.handleBlurPrice}
+                                /> 
+                            </FormControl>
+                            </div>
+                        </Tooltip>
                     </CardContent>
                     <CardActions>
                         <Button variant="raised" disabled={!this.state.canApplyFilter} onClick={this.handleClickApplyFilter}>Pas toe</Button>
