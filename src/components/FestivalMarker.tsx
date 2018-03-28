@@ -6,7 +6,7 @@ import FestivalDialog from './FestivalDialog';
 
 interface Props {
     festival: Festival;
-    requestFindHotels: (location: any, radius: number) => void;
+    requestFindHotels: (location: any, radius: number, currentZoom: number) => void;
 }
 interface State {
     popoutOpen: boolean;

@@ -26,6 +26,8 @@ interface State {
     filterMinPrice: number;
     filterMaxPrice: number;
     hotels: google.maps.places.PlaceResult[];
+    mapCenter: any;
+    mapZoom: number;
 }
 
 const placeholders = [
@@ -95,7 +97,7 @@ class App extends React.Component<Props, State> {
         this.setState({filteredFestivals: festivals/*, filterMinPrice: minPrice, filterMaxPrice: maxPrice */});
     }
 
-    handleRequestFindHotels = (location: any, radius: number) => {
+    handleRequestFindHotels = (location: any, radius: number, currentZoom: number) => {
         this.setState({isLoading: true});
         const service = new google.maps.places.PlacesService(document.createElement('div'));
 
@@ -109,7 +111,7 @@ class App extends React.Component<Props, State> {
         results => {
             const places = results as google.maps.places.PlaceResult[];
 
-            this.setState({isLoading: false, hotels: places});
+            this.setState({isLoading: false, hotels: places, mapCenter: {lat: Number(location.latitude), lng: Number(location.longitude)}, mapZoom: currentZoom});
         });
     }
 
@@ -156,8 +158,8 @@ class App extends React.Component<Props, State> {
     }
 
     render() {
-        let markers = this.state.filteredFestivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} requestFindHotels={this.handleRequestFindHotels} />);
-        markers = [...markers, ...this.state.hotels.map((h: google.maps.places.PlaceResult, i: number) => <HotelMarker key={i} hotel={h} />)];
+        const markers = this.state.filteredFestivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} requestFindHotels={this.handleRequestFindHotels} />);
+        const hotelMarkers = this.state.hotels.map((h: google.maps.places.PlaceResult, i: number) => <HotelMarker key={i} hotel={h} />);
         return (
             <div className="App">
                 <SearchBar 
@@ -169,7 +171,8 @@ class App extends React.Component<Props, State> {
                     onRequestApplyFilter={this.setFilterFestivals}
                 />
                 <GoogleMap 
-                    markers={markers}
+                    clusteredMarkers={markers}
+                    markers={hotelMarkers}
                     zoom={this.state.mapZoom}
                     center={this.state.mapCenter}
                     onClusterClick={this.handleClusterClick}

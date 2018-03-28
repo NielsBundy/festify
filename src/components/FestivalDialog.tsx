@@ -15,7 +15,7 @@ interface Props {
     isOpen: boolean;
     festivals: Festival[];
     onRequestClose: () => void;
-    requestFindHotels: (location: any, radius: number) => void;
+    requestFindHotels: (location: any, radius: number, currentZoom: number) => void;
 }
 interface State {
     index: number;
@@ -32,7 +32,7 @@ export default class FestivalDialog extends React.Component<Props, State> {
 
     handleClickFindHotels = () => {
         this.props.onRequestClose();
-        this.props.requestFindHotels(this.props.festivals[this.state.index].location, 500);
+        this.props.requestFindHotels(this.props.festivals[this.state.index].location, 500, 16);
     }
 
     handleClickForward = () => {
