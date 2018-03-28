@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const netherlandsCoords = {lat: 52.15, lng: 5.3};
-export const googleMapURL = 'https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBuUBVvxTNR8tDpj5yIbqm1j3N6fCepr0U';
+export const googleMapURL = 'https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBuUBVvxTNR8tDpj5yIbqm1j3N6fCepr0U&libraries=places';
 
 const Map: React.SFC<Props> = (props) => {
 

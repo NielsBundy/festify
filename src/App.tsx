@@ -7,6 +7,7 @@ import Festival from './models/Festival';
 import FestivalParser from './FestivalParser';
 import axios from 'axios';
 import FestivalMarker from './components/FestivalMarker';
+import HotelMarker from './components/HotelMarker';
 import FestivalDialog from './components/FestivalDialog';
 import { CircularProgress } from 'material-ui/Progress';
 import 'typeface-roboto';
@@ -24,6 +25,7 @@ interface State {
     searchPlaceholder: string;
     filterMinPrice: number;
     filterMaxPrice: number;
+    hotels: google.maps.places.PlaceResult[];
 }
 
 const placeholders = [
@@ -44,7 +46,8 @@ class App extends React.Component<Props, State> {
         clusters: [],
         searchPlaceholder: placeholders[Math.floor(Math.random() * placeholders.length)],
         filterMinPrice: 0,
-        filterMaxPrice: 0
+        filterMaxPrice: 0,
+        hotels: []
     };
 
     componentWillMount() {
@@ -93,6 +96,7 @@ class App extends React.Component<Props, State> {
     }
 
     handleRequestFindHotels = (location: any, radius: number) => {
+        this.setState({isLoading: true});
         const service = new google.maps.places.PlacesService(document.createElement('div'));
 
         service.nearbySearch(
@@ -103,7 +107,9 @@ class App extends React.Component<Props, State> {
             name: 'hotel'
         },
         results => {
-            alert(results[0].name);
+            const places = results as google.maps.places.PlaceResult[];
+
+            this.setState({isLoading: false, hotels: places});
         });
     }
 
@@ -150,8 +156,8 @@ class App extends React.Component<Props, State> {
     }
 
     render() {
-        const markers = this.state.filteredFestivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} requestFindHotels={this.handleRequestFindHotels} />);
-
+        let markers = this.state.filteredFestivals.map((f: Festival, i: number) => <FestivalMarker key={i} festival={f} requestFindHotels={this.handleRequestFindHotels} />);
+        markers = [...markers, ...this.state.hotels.map((h: google.maps.places.PlaceResult, i: number) => <HotelMarker key={i} hotel={h} />)];
         return (
             <div className="App">
                 <SearchBar 

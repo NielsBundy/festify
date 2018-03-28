@@ -27,6 +27,8 @@ interface State {
     value: string;
     minPrice: number;
     maxPrice: number;
+    genre: string;
+    place: string;
     canApplyFilter: boolean;
 }
 
@@ -37,7 +39,9 @@ export default class SearchBar extends React.Component<Props, State> {
         filterShown: false,
         minPrice: this.props.minPrice,
         maxPrice: this.props.maxPrice,
-        canApplyFilter: false
+        canApplyFilter: false,
+        genre: '',
+        place: ''
     };
 
     componentWillReceiveProps(props: Props) {
@@ -114,10 +118,26 @@ export default class SearchBar extends React.Component<Props, State> {
 
     handleClickApplyFilter = () => {
         this.setState({canApplyFilter: false});
+
+        const genre = this.state.genre.trim().toLowerCase();
+        const place = this.state.place.trim().toLowerCase();
+
         this.props.onRequestApplyFilter((f: Festival) => {
-            return f.ticketPrice >= this.state.minPrice &&
-                   f.ticketPrice <= this.state.maxPrice;
+            const priceOk = f.ticketPrice >= this.state.minPrice &&
+                            f.ticketPrice <= this.state.maxPrice;
+            const genreOk = genre === '' || f.name.toLowerCase().includes(genre);
+            const placeOk = place === '' || f.address.toLowerCase().includes(place);
+
+            return priceOk && genreOk && placeOk;
         });
+    }
+
+    handleChangeGenre = (event: any) => {
+        this.setState({genre: event.target.value, canApplyFilter: true});
+    }
+
+    handleChangePlace = (event: any) => {
+        this.setState({place: event.target.value, canApplyFilter: true});
     }
 
     public render() {
@@ -175,6 +195,8 @@ export default class SearchBar extends React.Component<Props, State> {
                             </FormControl>
                             </div>
                         </Tooltip>
+                        <TextField label="Genre" fullWidth style={{margin: 5}} value={this.state.genre} onChange={this.handleChangeGenre} />
+                        <TextField label="Plaats" fullWidth style={{margin: 5}} value={this.state.place} onChange={this.handleChangePlace} />
                     </CardContent>
                     <CardActions>
                         <Button variant="raised" disabled={!this.state.canApplyFilter} onClick={this.handleClickApplyFilter}>Pas toe</Button>
