@@ -1,0 +1,31 @@
+div.space{
+    position: 'absolute';
+    height: 100vh;
+    background-image: url(https://cdn.ticketswap.com/public/201703/13f36d76-e60c-4ce2-95a1-b86aa3c591aa.jpeg);
+    background-size: cover;
+    background-position: 50%;
+    text-align: center;
+}
+
+div.header{
+    height: 15vh;
+}
+
+div.logo {
+    background-image: url(https://i.imgur.com/AwZtWL5.png);
+    height: 22vh;
+    background-repeat: no-repeat;
+    background-position-x: 29px;
+    background-position-y: 15px;
+}
+
+div.link a{
+    color: white; 
+    text-decoration: none;
+}
+
+div.buttontje{
+    padding-top: 56px;
+}
+
+/* Ties is een aap */

@@ -11,6 +11,8 @@ import HotelMarker from './components/HotelMarker';
 import FestivalDialog from './components/FestivalDialog';
 import { CircularProgress } from 'material-ui/Progress';
 import 'typeface-roboto';
+import Grid from 'material-ui/Grid';
+import Button from 'material-ui/Button';
 
 import Dialog, {
     DialogContent,
@@ -162,6 +164,42 @@ class App extends React.Component<Props, State> {
         const hotelMarkers = this.state.hotels.map((h: google.maps.places.PlaceResult, i: number) => <HotelMarker key={i} hotel={h} />);
         return (
             <div className="App">
+                <div className="space">
+                    <div className="header" style={{padding: 24}}>
+                        <Grid container spacing={24}>
+                            <Grid item xs sm={3}>
+                                <div className="logo">
+                                .
+                                </div>
+                            </Grid>
+                            <Grid item xs>
+                                .
+                            </Grid>
+                            <Grid item xs>
+                                .
+                            </Grid>
+                            <Grid item xs>
+                                .
+                            </Grid>
+                            <Grid item xs>
+                                <div className="buttontje">
+                                <Button variant="raised" color="secondary"  size="large">
+                                    Hoe werkt het?
+                                </Button>
+                                </div>
+                            </Grid>
+                            <Grid item xs>
+                            <div className="buttontje">
+                                <Button variant="raised" color="secondary"  size="large">
+                                    <div className="link">
+                                        <a href="https://www.ticketmaster.nl/festivals/alle-festivals/10101/events">Koop tickets</a>
+                                    </div>
+                                </Button>
+                            </div>
+                            </Grid>
+                        </Grid>
+                    </div>
+                </div>
                 <SearchBar 
                     style={{position: 'absolute', zIndex: 2, margin: 10}}
                     placeholder={this.state.searchPlaceholder}
