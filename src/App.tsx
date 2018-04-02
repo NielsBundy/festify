@@ -195,11 +195,14 @@ class App extends React.Component<Props, State> {
                             <Grid item xs>
                             <div className="buttontje">
                                 <Button variant="raised" color="secondary"  size="large" onClick={() => this.setState({isOnLandingPage: false})}>
-                                    Begin
+                                    Zoek een festival!
                                 </Button>
                             </div>
                             </Grid>
                         </Grid>
+                        <div className="titel">
+                            <h1>Mis nooit meer een festival met Festify!</h1>
+                        </div>
                     </div>
                     <Dialog 
                         maxWidth={false}

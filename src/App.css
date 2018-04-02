@@ -28,4 +28,11 @@ div.buttontje{
     padding-top: 56px;
 }
 
+div.titel{
+    color: white;
+    font-size: 35px;
+    padding-top: 122px;
+    text-shadow: 0 0 10px rgba(0,19,25,0.1), 0 1px 1px rgba(0,19,25,0.4);
+}
+
 /* Ties is een aap */
