@@ -171,7 +171,7 @@ class App extends React.Component<Props, State> {
                 <div className="space">
                     <div className="header" style={{padding: 24}}>
                         <Grid container spacing={24}>
-                            <Grid item xs sm={3}>
+                            <Grid item xs sm={4}>
                                 <div className="logo">
                                 .
                                 </div>
@@ -209,7 +209,7 @@ class App extends React.Component<Props, State> {
                         <DialogContent style={{padding: 0}}>
                         <iframe 
                             style={{width: 1024, height: 600}}
-                            src="https://www.youtube.com/embed/px0zyeeGNYU?rel=0&amp;controls=0&amp;showinfo=0" 
+                            src="https://www.youtube.com/embed/SXiDgKC3Who?rel=0&amp;controls=0&amp;showinfo=0" 
                         />
                         </DialogContent>
                     </Dialog>
